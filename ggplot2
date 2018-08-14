@@ -1,0 +1,73 @@
+#Some quick code for ggplot2 graphs
+#==================================
+
+# Histogram
+
+hist <- ggplot(peakcounts, aes(Number, Count)) + geom_bar(stat = "identity") + theme_classic()+ theme(axis.text.x = element_text(angle=90, hjust=1)) + scale_x_continuous(breaks = round(seq(min(peakcounts$Number), max(peakcounts$Number), by = 1),1)) + scale_y_continuous(breaks = round(seq(min(0), max(peakcounts$Count), by = 10000),1), labels = scales::comma)
+
+# Venn diagram
+library(VennDiagram)
+venn <- draw.pairwise.venn(area1 = 274843, area2 = 813110, cross.area = 192727, category = c("Merged Peaks from Individuals", 
+    "Peaks from Merged BAM file"), cat.pos=c(0,0), scaled = FALSE)
+
+#Line Graph
+
+NOC2L$V3 <- 1:nrow(NOC2L)
+linegraph <- ggplot(overlap_stats, aes(File_Number, Percent_Overlap)) + geom_line() + expand_limits(x = 0, y = 0) + theme_classic()+ theme(axis.text.x = element_text(angle=90, hjust=1)) + scale_x_continuous(breaks = round(seq(min(overlap_stats$File_Number), max(overlap_stats$File_Number), by = 1),1))
+
+
+#extract donor id from filename
+donor_id$V2 <- sapply(strsplit(donor_id$V1, "_"), "[[", 3)
+
+#order by all columns
+df[order(df[,1],df[,2],decreasing=TRUE),]
+
+
+ggplot(SAMD11, aes(Donor, Reads)) + geom_point() + expand_limits(x = 0, y = 0) + theme_classic()+ theme(axis.text.x = element_text(angle=90, hjust=1)) + scale_x_continuous(breaks = round(seq(min(SAMD11$Donor), max(SAMD11$Donor), by = 1),1))
+
+CD96 <- ggplot(cov_expr_long, aes(x = sample,y = value, color = variable, group = variable)) + geom_line() + expand_limits(x = 0, y = 0) + theme_classic()+ theme(axis.text.x = element_text(angle=90, hjust=1)) + scale_colour_manual(values=c("red", "blue")) + scale_y_continuous(breaks = round(seq(min(cov_expr_long$value), max(cov_expr_long$value), by = 50),1))
+
+linegraph <- ggplot(CD96_cov_expr, aes(scaled_cov, expr_val)) + geom_line() + expand_limits(x = 0, y = 0) + theme_classic() + scale_y_continuous(breaks = round(seq(min(CD96_cov_expr$expr_val), max(CD96_cov_expr$expr_val), by = 50),1))
+
+
+
+
+
+
+
+#Coverage vs TPM graphs
+
+#Graph cov and gene expr on same graph
+library(reshape2)
+
+#melt data??
+cov_expr_long <- melt(CD96_cov_expr, id = "sample")
+
+#Convert decimals into numerics
+cov_expr_long$value <- as.numeric(as.character(cov_expr_long$value))
+
+CD96 <- ggplot(cov_expr_long, aes(x = sample,y = value, color = variable, group = variable)) + geom_line() + expand_limits(x = 0, y = 0) + theme_classic()+ theme(axis.text.x = element_text(angle=90, hjust=1)) + scale_colour_manual(values=c("red", "blue")) + scale_y_continuous(breaks = round(seq(min(cov_expr_long$value), max(cov_expr_long$value), by = 50),1))
+
+ITGA4_dot <- ggplot(cov_expr_long, aes(x = sample,y = value, color = variable, group = variable)) + geom_point() + expand_limits(x = 0, y = 0) + theme_classic()+ theme(axis.text.x = element_text(angle=90, hjust=1), axis.text.y = element_text(size = 12), legend.text = element_text(size = 12)) + scale_colour_manual(labels= c("Normalized coverage (10e-7)", "Transcripts per million"), values=c("red", "blue")) + scale_y_continuous(breaks = round(seq(min(cov_expr_long$value), max(cov_expr_long$value), by = 50),0)) + ggtitle("ITGA4")
+
+#Graph coverage against gene expr
+#Convert decimals into numerics
+B3GALT6$expr_val <- as.numeric(as.character(B3GALT6$TPM))
+B3GALT6$scaled_cov <- as.numeric(as.character(B3GALT6$scaled_cov))
+
+linegraph <- ggplot(CD96_cov_expr, aes(scaled_cov, expr_val)) + geom_line(color = "blue") + expand_limits(x = 0, y = 0) + theme_classic() + scale_y_continuous(breaks = round(seq(min(CD96_cov_expr$expr_val), max(CD96_cov_expr$expr_val), by = 50),0)) + labs(title ="CD96", x = "Normalized coverage (10e-7)", y = "Transcripts per million") 
+
+dotgraph <- ggplot(B10_1797, aes(scaled_cov, V5)) + geom_point(color = "blue") + expand_limits(x = 0, y = 0) + theme_classic() + theme(title = element_text(size = 22), axis.title = element_text(size = 15), axis.text = element_text(size = 18)) + scale_x_continuous(expand=c(0,0)) + scale_y_continuous(trans='log10', labels=comma, expand=c(0,0)) + labs(title ="B10_1797", x = "Normalized coverage (10e-7)", y = "Transcripts per million") 
+
+loggraph <- ggplot(A10, aes(scaled_cov, V5)) + geom_point(color = "blue", size = 1) + expand_limits(x = 0, y = 0) + theme_classic() + theme(title = element_text(size = 22), axis.title = element_text(size = 15), axis.text = element_text(size = 18)) + scale_x_continuous(trans='log10', expand=c(0,0)) + scale_y_continuous(trans='log10', labels=comma, expand=c(0,0)) + labs(title ="B10_1797", x = "Normalized coverage (10e-7)", y = "Transcripts per million") 
+
+
+dotgraph <- ggplot(corr, aes(num, corrs)) + geom_point(color = "blue") + expand_limits(x = 0, y = 0) + theme_classic() + theme(title = element_text(size = 10), axis.title = element_text(size = 15), axis.text = element_text(size = 18)) + scale_x_continuous(expand=c(0,0)) + scale_y_continuous(breaks = round(seq(min(corr$corrs), max(corr$corrs), by = 0.2),1)) + labs(title ="Correlation between Coverage and Expression for Protein Coding Genes", x = "Gene", y = "Spearman Correlation") 
+
+ORMDL3_2_graph <- ggplot(ORMDL3_2, aes(x = V9, y = TPM)) + geom_point(color = "blue") + expand_limits(x = 0, y = 0) + theme_classic()+ theme(title = element_text(size = 15), axis.title = element_text(size = 15), axis.text = element_text(size = 18)) + scale_x_continuous(expand=c(0,0)) + scale_y_continuous(breaks = round(seq(0, max(as.numeric(ORMDL3_2$TPM)), by = 10),0)) + labs(title ="ORMDL3_2", x = "Normalized coverage (10e-7)", y = "Transcripts per million") 
+
+
+
+corr_tpm_1k_graph <- ggplot(corr_tpm_1000, aes(mean_tpm.mean_tpm, corrs.corrs)) + geom_point(color = "blue") + expand_limits(x = 0, y = 0) + theme_classic() + theme(title = element_text(size = 10), axis.title = element_text(size = 15), axis.text = element_text(size = 18)) + scale_x_continuous(expand=c(0,0)) + scale_y_continuous(breaks = round(seq(0, max(corr_tpm_1000$corrs.corrs), by = 0.2),1)) + labs(title ="Correlation between Gene Coverage and Expression by Mean TPM", x = "Mean TPM", y = "Spearman Correlation")
+
+corr_dist_graph <- ggplot(corr_dist_1m, aes(dist, corrs)) + geom_point(color = "blue", size = 1) + expand_limits(x = 0, y = 0) + theme_classic() + theme(title = element_text(size = 10), axis.title = element_text(size = 15), axis.text = element_text(size = 18)) +  scale_x_continuous(trans='log10', expand=c(0,0)) + scale_y_continuous(breaks = round(seq(0, max(corr_dist_1m$corrs), by = 0.2),1)) + labs(title ="Correlation between Gene Coverage and Expression by distance to TSS", x = "log10(Distance to TSS (bp))", y = "Spearman Correlation") 
